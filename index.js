@@ -1,29 +1,22 @@
-const express = require("express");
-const app = express();
-const cors = require("cors");
-const dotenv = require("dotenv");
-const connectDB = require("./config/db");
-const ticketRoutes = require("./routes/ticketRoutes");
+// index.js
+const express = require('express');
+const dotenv = require('dotenv');
+const mongoose = require('mongoose');
+const ticketRoutes = require('./routes/ticketRoutes');
 
 dotenv.config();
+const app = express();
 
-// Connect to the database
-connectDB();
-
-// Middleware
-app.use(cors());
-app.use(express.json());
-
-// Routes
-app.use("/api/tickets", ticketRoutes); // All routes under /api/tickets
+app.use(express.json());  // Middleware for parsing JSON data
+app.use('/api/tickets', ticketRoutes);
 
 // Default route
-app.get("/", (req, res) => {
-  res.send("Welcome to the Ticket System!");
-});
+app.get('/', (req, res) => res.send('Welcome to the Ticketing System API'));
 
-// Start the server
+// MongoDB connection
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('MongoDB Connected'))
+  .catch(err => console.log(err));
+
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
